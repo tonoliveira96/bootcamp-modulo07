@@ -1,67 +1,55 @@
-import React from 'react';
+import React, {Component}from 'react';
 import {MdShoppingBasket} from 'react-icons/md'
+import api from '../../services/api';
+import {formatPrice} from '../../util/format';
 
 import { ProductList } from './styles';
 
-export default function Home() {
-  return (
-    <ProductList>
-      <li>
-        <img src="https://static.netshoes.com.br/produtos/tenis-mizuno-ez-flex-2-masculino/66/D16-4581-266/D16-4581-266_zoom2.jpg?ts=1570129001&ims=326x" alt="Tenis"/>
-        <strong>Tênis Cool</strong>
-        <span>R$ 129,90</span>
-        <button type="button">
-          <div>
-            <MdShoppingBasket sixe={16} color="#fff" />
-          </div>
-          <span>Adicionar ao carinho</span>
-        </button>
-      </li>
+export default class Home extends Component {
 
-      <li>
-        <img src="https://static.netshoes.com.br/produtos/tenis-mizuno-ez-flex-2-masculino/66/D16-4581-266/D16-4581-266_zoom2.jpg?ts=1570129001&ims=326x" alt="Tenis"/>
-        <strong>Tênis Cool</strong>
-        <span>R$ 129,90</span>
-        <button type="button">
-          <div>
-            <MdShoppingBasket sixe={16} color="#fff" />
-          </div>
-          <span>Adicionar ao carinho</span>
-        </button>
-      </li>
-      <li>
-        <img src="https://static.netshoes.com.br/produtos/tenis-mizuno-ez-flex-2-masculino/66/D16-4581-266/D16-4581-266_zoom2.jpg?ts=1570129001&ims=326x" alt="Tenis"/>
-        <strong>Tênis Cool</strong>
-        <span>R$ 129,90</span>
-        <button type="button">
-          <div>
-            <MdShoppingBasket sixe={16} color="#fff" />
-          </div>
-          <span>Adicionar ao carinho</span>
-        </button>
-      </li>
-      <li>
-        <img src="https://static.netshoes.com.br/produtos/tenis-mizuno-ez-flex-2-masculino/66/D16-4581-266/D16-4581-266_zoom2.jpg?ts=1570129001&ims=326x" alt="Tenis"/>
-        <strong>Tênis Cool</strong>
-        <span>R$ 129,90</span>
-        <button type="button">
-          <div>
-            <MdShoppingBasket sixe={16} color="#fff" />
-          </div>
-          <span>Adicionar ao carinho</span>
-        </button>
-      </li>
-      <li>
-        <img src="https://static.netshoes.com.br/produtos/tenis-mizuno-ez-flex-2-masculino/66/D16-4581-266/D16-4581-266_zoom2.jpg?ts=1570129001&ims=326x" alt="Tenis"/>
-        <strong>Tênis Cool</strong>
-        <span>R$ 129,90</span>
-        <button type="button">
-          <div>
-            <MdShoppingBasket sixe={16} color="#fff" />
-          </div>
-          <span>Adicionar ao carinho</span>
-        </button>
-      </li>
-    </ProductList>
-  );
+  state={
+    products:[]
+  }
+
+
+async componentDidMount(){
+  const response = await api.get('products');
+
+  const data = response.data.map(product=>({
+    ... product,
+    priceFormatted: formatPrice(product.price)
+  }))
+
+  this.setState({products: data})
+}
+
+
+
+  render(){
+
+    const {products} = this.state;
+
+    return (
+      <ProductList>
+
+        {
+          products.map(product=>(
+            <li key={product.id}>
+            <img src={product.image} alt={product.title}/>
+          <strong>{product.title}</strong>
+          <span>{product.priceFormatted}</span>
+            <button type="button">
+              <div>
+                <MdShoppingBasket sixe={16} color="#fff" />
+              </div>
+              <span>Adicionar ao carinho</span>
+            </button>
+          </li>
+          ))
+        }
+
+
+      </ProductList>
+    );
+  }
 }
