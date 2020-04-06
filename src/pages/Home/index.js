@@ -36,6 +36,7 @@ handleAddProduct = product =>{
   render(){
 
     const {products} = this.state;
+    const {amount} = this.props;
 
     return (
       <ProductList>
@@ -48,7 +49,8 @@ handleAddProduct = product =>{
           <span>{product.priceFormatted}</span>
             <button type="button" onClick={()=> this.handleAddProduct(product)}>
               <div>
-                <MdShoppingBasket sixe={16} color="#fff" />
+                <MdShoppingBasket sixe={16} color="#fff" />{' '}
+                {amount[product.id]  || 0 }
               </div>
               <span>Adicionar ao carinho</span>
             </button>
@@ -61,7 +63,15 @@ handleAddProduct = product =>{
   }
 }
 
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product)=>{
+    amount[product.id] = product.amount
+
+    return amount;
+  }, {})
+});
+
 const mapDispatchToProps = dispatch =>
   bindActionCreators(CartActions, dispatch);
 
-export default connect(null, mapDispatchToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
